@@ -81,7 +81,7 @@
           };
 
           /* ========== API ========== */
-          let {data} = await this.$axios.post('https://4d57-2001-fb1-35-6fc3-49bc-362-6745-d692.ngrok-free.app/api/search-directions',json);
+          let {data} = await this.$axios.post('http://localhost:8000/api/search-directions',json);
           loading.hide();
 
           if(data.status == 'ZERO_RESULTS'){
@@ -130,7 +130,7 @@
           };
 
           /* ========== API ========== */
-          let {data} = await this.$axios.post('https://4d57-2001-fb1-35-6fc3-49bc-362-6745-d692.ngrok-free.app/api/search-restaurants',json);
+          let {data} = await this.$axios.post('http://localhost:8000/api/search-restaurants',json);
           loading.hide();
 
           if(data.status == 'ZERO_RESULTS'){
