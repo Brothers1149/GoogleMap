@@ -1,12 +1,12 @@
 <template>
   <div class="container">
-    <div class="card mt-5">
+    <div class="card shadow-lg mt-5">
       <h5 class="card-header">Google Map</h5>
       <div class="card-body">
         <div class="row col-12">
           <div class="col-10">
-            <label class="form-label">Location Start</label>
-            <gmap-autocomplete placeholder="ป้อนตำแหน่ง" :select-first-on-enter="true" @place_changed="initMarkerStart" class="form-control"></gmap-autocomplete>
+            <label class="form-label">Existing place</label>
+            <gmap-autocomplete placeholder="ป้อนตำแหน่ง ปัจจุบัน" :select-first-on-enter="true" @place_changed="initMarkerStart" class="form-control"></gmap-autocomplete>
           </div>
           <div class="col-2 d-flex align-self-end">
             <div class="text-center">
@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div class="card mt-3 mb-3">
+    <div class="card shadow-lg mt-3 mb-3">
       <div class="card-body">
         <div class="row col-12">
           <div class="col-8">
@@ -27,15 +27,15 @@
             </gmap-map>
           </div>
           <div class="col-4">
-            <table class="table table-striped table-bordered table-fixed">
+            <table class="table table-bordered table-fixed table-hover">
               <thead>
                 <tr>
-                  <th scope="col" class="text-center">instructions</th>
+                  <th scope="col" class="text-center">list Restaurants</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="i in stepList" :key="i">
-                  <th v-html="i.html_instructions"></th>
+                <tr v-for="(item, idx) in locationMarkers" :key="idx">
+                  <th style="cursor: pointer;" @click="getDirections(item)">{{item.name}}</th>
                 </tr>
               </tbody>
             </table>
@@ -54,9 +54,7 @@
         center: {'lat': 13.828253,'lng': 100.5284507},
         locationMarkers: [],
         locationStart: {},
-        locationEnd:   {},
-        path:[],
-        stepList:[],
+        path:[]
       };
     },
 
@@ -67,6 +65,7 @@
     methods: {
       initMarkerStart(x){
         this.locationStart = x;
+        
       },
       async getDirections(x) {
         let loading = this.$loading.show();
@@ -102,11 +101,6 @@
             return [...arr, item];
           },[]);
 
-          /* ========== Step ========== */
-          this.stepList = (routes.legs||[]).map(o => {
-            return o.steps;
-          })[0];
-
         }catch(ex){
           console.log(ex);
         }finally{
@@ -123,9 +117,16 @@
           }
 
           /* ========== Mapping data ========== */
+          let location = ((this.locationStart||{}).geometry||{}).location||{};
+          let lat = this.center.lat;
+          let lng = this.center.lng;
+          try{
+            lat = location.lat();
+            lng = location.lng();
+          }catch(ex){}
           let json = {
-            'latitude':this.locationStart.geometry.location.lat(),
-            'longitude':this.locationStart.geometry.location.lng()
+            'latitude':lat,
+            'longitude':lng
           };
 
           /* ========== API ========== */
@@ -138,11 +139,11 @@
           }
 
           this.locationMarkers = (data.results||[]).map(o=>{
-            return {'position':{'lat': o.geometry.location.lat,'lng': o.geometry.location.lng},'place_id':o.place_id};
+            return {'position':{'lat': o.geometry.location.lat,'lng': o.geometry.location.lng},'place_id':o.place_id,'name':o.name};
           });
 
           /* ========== Markers center ========== */
-          this.center = {'lat':this.locationStart.geometry.location.lat(),'lng':this.locationStart.geometry.location.lng()};
+          this.center = {'lat':lat,'lng':lng};
 
         }catch(ex){
           console.log(ex);
@@ -154,7 +155,7 @@
         navigator.geolocation.getCurrentPosition((res) => {
           this.center = {'lat': 13.828253,'lng': 100.5284507};
         });
-        this.locationMarkers.push({'position':this.center});
+        this.addLocationMarker();
       },
     },
   };
