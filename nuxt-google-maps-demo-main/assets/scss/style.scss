@@ -1,0 +1,18 @@
+@use "sass:color";
+// Bootstrap
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/bootstrap";
+
+.table-fixed{
+    width: 100%;
+    tbody{
+      height:450px;
+      overflow-y:auto;
+      width: 100%;
+    }
+    thead,tbody,tr,td,th{
+      display:block;
+    }
+}
+  
