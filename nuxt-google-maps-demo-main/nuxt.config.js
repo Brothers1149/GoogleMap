@@ -22,7 +22,8 @@ export default {
     { src: "~/plugins/google-maps.js" },
 		{ src: '~/plugins/bootstrap.client.js'},
 		{ src: '~/plugins/lazysizes.client.js'},
-		{ src: '~/plugins/loading-overlay.js'}
+		{ src: '~/plugins/loading-overlay.js'},
+		{ src: '~/plugins/bootstrap-vue.js'}
   ],
   components: true,
   buildModules: [],
